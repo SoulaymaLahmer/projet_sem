@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.css">
+    <link rel="stylesheet" href="css/wardrobe-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="css/swiper-bundle.min.css">
+    <title>MY Wardrobe</title>
+</head>
+<body>
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo"><%= name %> WARDROBE</a>
+            <div class="nav__menu" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="/home" class="nav__link">Home</a></li>
+                    <li class="nav__item"><a href="/clothes" class="nav__link">Clothes</a></li>
+                    <li class="nav__item"><a href="/shoes" class="nav__link">Shoes</a></li>
+                    <li class="nav__item"><a href="/accessories" class="nav__link">Accessories</a></li>
+                    <form action="/logout?_method=DELETE" method="post">
+                        <li class="nav__item"><button type="submit" class="nav__link">LogOut</button></li>
+                    </form>
+                </ul>
+                <div class="nav__close" id="nav-close">
+                    <i class="ri-close-line"></i>
+                </div>
+            </div>
+            <div class="nav__actions">
+                <a href="anaghim/meteo.html"><i class="ri-celsius-line"></i></a>
+                <a href="anaghim/quiz.html"><i class="ri-survey-line"></i></a>
+                <i class="ri-shopping-cart-line"></i>
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class="ri-menu-line"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <section class="section my-4">
+        <div class="container text-center">
+            <div class="title py-5">
+                <h1>Upload Your Clothes</h1>
+                <p class="subtitle">Upload images to your <strong>virtual wardrobe</strong></p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <form action="/uploadmultiple" enctype="multipart/form-data" method="post">
+                        <div class="row">
+                            <div class="col-8">
+                                <input type="file" class="form-control" name="images" id="formFile" multiple>
+                            </div>
+                            <div class="col-4">
+                                <select class="form-control" name="category" id="category">
+                                    <option value="Tops">Tops</option>
+                                    <option value="Bottoms">Bottoms</option>
+                                    <option value="Shoes">Shoes</option>
+                                    <option value="Accessories">Accessories</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <input type="submit" class="btn btn-warning" value="Upload Images">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <main class="main">
+        <section class="home">
+            <div class="home__container container">
+                <div class="home__content">
+                    <% const categories = ["Tops", "Bottoms", "Shoes", "Accessories"]; %>
+
+                    <% categories.forEach(category => { %>
+                    <div class="category-section">
+                        <h2><%= category %></h2>
+                        <div class="swiper <%= category.toLowerCase() %>-swiper swiper-container">
+                            <div class="swiper-wrapper">
+                                <% 
+                                    // Filter images based on the category
+                                    images.filter(image => image.category === category).forEach(image => { 
+                                %>
+                                    <article class="home__article swiper-slide">
+                                        <img src="data:<%= image.contentType %>;base64,<%= image.imageBase64 %>" 
+                                             alt="<%= image.filename %>" class="home__img">
+                                        <h2 class="home__product"><%= image.filename.split('.')[0] %></h2>
+                                    </article>
+                                <% }); %>
+                            </div>
+                            <!-- Navigation buttons for Swiper -->
+                            <div class="swiper-button-prev <%= category.toLowerCase() %>-prev"></div>
+                            <div class="swiper-button-next <%= category.toLowerCase() %>-next"></div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script src="js/swiper-bundle.min.js"></script>
+    <script src="js\wardrobejs.js"></script>
+    <script>
+        // Initialize Swipers dynamically for each category
+        const categories = ["tops", "bottoms", "shoes", "accessories"];
+        categories.forEach(category => {
+            new Swiper(`.${category}-swiper`, {
+                slidesPerView: 3,
+                spaceBetween: 20,
+                navigation: {
+                    nextEl: `.${category}-next`,
+                    prevEl: `.${category}-prev`,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        });
+    </script>
+</body>
+</html>
